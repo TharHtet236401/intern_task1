@@ -80,6 +80,29 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <!-- Pagination -->
+    {% if submissions.paginator.num_pages > 1 %}
+    <div class="pagination">
+        {% if submissions.has_previous %}
+            <a href="?page=1{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}" 
+               class="page-link first">&laquo; First</a>
+            <a href="?page={{ submissions.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}" 
+               class="page-link">&lsaquo; Previous</a>
+        {% endif %}
+
+        <span class="current-page">
+            Page {{ submissions.number }} of {{ submissions.paginator.num_pages }}
+        </span>
+
+        {% if submissions.has_next %}
+            <a href="?page={{ submissions.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}" 
+               class="page-link">Next &rsaquo;</a>
+            <a href="?page={{ submissions.paginator.num_pages }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}" 
+               class="page-link last">Last &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
 </div>
 
 <script>
@@ -333,6 +356,41 @@ document.addEventListener('DOMContentLoaded', function() {
         font-size: 1.2em;
         font-weight: 600;
         color: #333;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-top: 30px;
+        padding: 20px 0;
+    }
+
+    .page-link {
+        padding: 8px 16px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        color: #007bff;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .page-link:hover {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+    .current-page {
+        padding: 8px 16px;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        color: #666;
+    }
+
+    .first, .last {
+        background-color: #f8f9fa;
     }
 </style>
 {% endblock %}

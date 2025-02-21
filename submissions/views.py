@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
+from django.core.paginator import Paginator
 from .models import Submission
 from django.contrib import messages
 from .forms import SubmissionForm
@@ -7,9 +8,10 @@ from .forms import SubmissionForm
 # Create your views here.
 def home(request):
     try:
-        # Get filter parameter
+        # Get filter parameters
         category = request.GET.get('category', '')
         status = request.GET.get('status', '')
+        page = request.GET.get('page', 1)
         
         # Base queryset
         submissions = Submission.objects.all()
@@ -27,8 +29,12 @@ def home(request):
         reviewed_count = submissions.filter(is_reviewed=True).count()
         pending_count = submissions.filter(is_reviewed=False).count()
 
+        # Pagination
+        paginator = Paginator(submissions, 10)  # Show 10 submissions per page
+        page_obj = paginator.get_page(page)
+
         context = {
-            'submissions': submissions,
+            'submissions': page_obj,
             'categories': Submission.CATEGORY_CHOICES,
             'selected_category': category,
             'selected_status': status,
