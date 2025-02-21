@@ -21,13 +21,20 @@ def home(request):
             submissions = submissions.filter(is_reviewed=True)
         elif status == 'pending':
             submissions = submissions.filter(is_reviewed=False)
-        count = submissions.count()
+
+        # Get counts for different states
+        total_count = submissions.count()
+        reviewed_count = submissions.filter(is_reviewed=True).count()
+        pending_count = submissions.filter(is_reviewed=False).count()
+
         context = {
             'submissions': submissions,
             'categories': Submission.CATEGORY_CHOICES,
             'selected_category': category,
             'selected_status': status,
-            'count': count,
+            'count': total_count,
+            'reviewed_count': reviewed_count,
+            'pending_count': pending_count,
         }
         return render(request, 'submissions/home.html', context)
     except Exception as e:

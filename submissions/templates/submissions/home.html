@@ -5,7 +5,20 @@
     <div class="header-section">
         <h1>Submissions</h1>
         <div class="header-right">
-            <span class="count-badge">Total: {{ count }}</span>
+            <div class="stats-container">
+                <div class="stat-box">
+                    <span class="stat-label">Total Entries</span>
+                    <span class="stat-value">{{ count }}</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Reviewed</span>
+                    <span class="stat-value">{{ reviewed_count }}</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Pending</span>
+                    <span class="stat-value">{{ pending_count }}</span>
+                </div>
+            </div>
             <a href="{% url 'create_submission' %}" class="create-btn">Create New</a>
         </div>
     </div>
@@ -289,16 +302,38 @@ document.addEventListener('DOMContentLoaded', function() {
     .header-right {
         display: flex;
         align-items: center;
-        gap: 20px;
+        gap: 30px;
     }
 
-    .count-badge {
-        background-color: #f8f9fa;
-        padding: 8px 15px;
-        border-radius: 20px;
+    .stats-container {
+        display: flex;
+        gap: 15px;
+    }
+
+    .stat-box {
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 10px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 120px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .stat-label {
+        font-size: 0.85em;
         color: #666;
-        font-weight: 500;
-        border: 1px solid #ddd;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+        font-size: 1.2em;
+        font-weight: 600;
+        color: #333;
     }
 </style>
 {% endblock %}
