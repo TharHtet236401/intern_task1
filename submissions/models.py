@@ -18,7 +18,6 @@ class Submission(models.Model):
         default='ACADEMIC'
     )
     is_reviewed = models.BooleanField(default=False)
-    is_verified = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
