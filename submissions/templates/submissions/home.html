@@ -54,12 +54,11 @@
                         hx-target="#content-section"
                         hx-trigger="change"
                         class="filter-select"
-                        name="category">
+                        name="category"
+                        hx-include="[name='status']">
                     <option value="" {% if not selected_category %}selected{% endif %}>All</option>
                     {% for code, name in categories %}
-                        <option value="{{ code }}" 
-                                {% if selected_category == code %}selected{% endif %}
-                                hx-get="{% url 'home' %}?category={{ code }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}">
+                        <option value="{{ code }}" {% if selected_category == code %}selected{% endif %}>
                             {{ name }}
                         </option>
                     {% endfor %}
@@ -72,18 +71,11 @@
                         hx-target="#content-section"
                         hx-trigger="change"
                         class="filter-select"
-                        name="status">
+                        name="status"
+                        hx-include="[name='category']">
                     <option value="" {% if not selected_status %}selected{% endif %}>All</option>
-                    <option value="pending" 
-                            {% if selected_status == 'pending' %}selected{% endif %}
-                            hx-get="{% url 'home' %}?status=pending{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">
-                        Pending
-                    </option>
-                    <option value="reviewed" 
-                            {% if selected_status == 'reviewed' %}selected{% endif %}
-                            hx-get="{% url 'home' %}?status=reviewed{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">
-                        Reviewed
-                    </option>
+                    <option value="pending" {% if selected_status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="reviewed" {% if selected_status == 'reviewed' %}selected{% endif %}>Reviewed</option>
                 </select>
             </div>
 
