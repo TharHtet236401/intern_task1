@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Submission
 from django.contrib import messages
+from .forms import SubmissionForm
 
 # Create your views here.
 def home(request):
@@ -39,3 +40,13 @@ def home(request):
         messages.error(request, f"An error occurred: {str(e)}")
         return redirect('home')
 
+def create_submission_view(request):
+    if request.method == 'POST':
+        form = SubmissionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Submission created successfully')
+            return redirect('home')
+    else:
+        form = SubmissionForm()
+    return render(request, 'submissions/create-submission.html', {'form': form})
