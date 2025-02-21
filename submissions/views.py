@@ -6,16 +6,21 @@ from django.contrib import messages
 # Create your views here.
 def home(request):
     try:
-        # Get filter parameters
+        # Get filter parameter
         category = request.GET.get('category', '')
         status = request.GET.get('status', '')
         
+
+        #this was like selecting all submissions and
+        ##and remove the submissions based on the each input the requestof like category and status
         # Base queryset
         submissions = Submission.objects.all()
         
-        # Apply filters
+        # if the query has the category , then we filter the submissions based on the category
         if category:
             submissions = submissions.filter(category=category)
+
+        # if 
         if status == 'verified':
             submissions = submissions.filter(is_verified=True)
         elif status == 'reviewed':
