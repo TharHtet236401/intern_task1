@@ -2,7 +2,10 @@
 
 {% block content %}
 <div class="container">
-    <h1>Create New Submission</h1>
+    <div class="header-section">
+        <h1>Create New Submission</h1>
+        <a href="{% url 'home' %}" class="back-btn">Back to Home</a>
+    </div>
     
     <div class="form-container">
         <form method="POST">
@@ -25,6 +28,26 @@
         padding: 20px;
         max-width: 800px;
         margin: 0 auto;
+    }
+
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .back-btn {
+        background-color: #6c757d;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .back-btn:hover {
+        background-color: #5a6268;
     }
 
     h1 {
