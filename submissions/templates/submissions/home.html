@@ -2,7 +2,10 @@
 
 {% block content %}
 <div class="container">
-    <h1>Submissions</h1>
+    <div class="header-section">
+        <h1>Submissions</h1>
+        <a href="{% url 'create_submission' %}" class="create-btn">Create New</a>
+    </div>
 
     <!-- Filter Section -->
     <div class="filters">
@@ -177,6 +180,26 @@
         color: #666;
         padding: 30px !important;
         font-style: italic;
+    }
+
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .create-btn {
+        background-color: #28a745;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .create-btn:hover {
+        background-color: #218838;
     }
 </style>
 {% endblock %}
