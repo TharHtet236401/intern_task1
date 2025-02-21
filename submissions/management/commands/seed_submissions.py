@@ -13,39 +13,45 @@ class Command(BaseCommand):
         # Clear existing entries
         Submission.objects.all().delete()
         
-        # Generate 75 submissions (random number between 50-100)
-        num_entries = random.randint(50, 100)
+        # Fixed number of entries
+        num_entries = 50
         
         # Lists for generating realistic content
-        text_contents = [
-            "Project proposal for Q2",
-            "Meeting minutes from team sync",
-            "Customer feedback summary",
-            "Product requirements document",
-            "Weekly progress report",
-            "Research findings",
-            "Bug report analysis",
-            "Feature specification",
-            "User interview notes",
-            "Market analysis report"
+        text_prefixes = [
+            "Project update:",
+            "Meeting summary:",
+            "Customer feedback:",
+            "Bug report:",
+            "Feature request:",
+            "Documentation:",
+            "Research notes:",
+            "Team discussion:",
+            "Product review:",
+            "Analysis report:"
         ]
         
         image_urls = [
-            "https://example.com/images/chart1.png",
-            "https://example.com/images/diagram2.png",
-            "https://example.com/images/screenshot3.png",
-            "https://example.com/images/graph4.png",
-            "https://example.com/images/photo5.jpg"
+            "https://picsum.photos/800/600",
+            "https://picsum.photos/900/600",
+            "https://picsum.photos/800/500",
+            "https://picsum.photos/700/500",
+            "https://picsum.photos/600/400",
+            "https://source.unsplash.com/random/800x600",
+            "https://source.unsplash.com/random/900x600",
+            "https://source.unsplash.com/random/800x500",
+            "https://source.unsplash.com/random/700x500",
+            "https://source.unsplash.com/random/600x400"
         ]
 
         submissions = []
         for i in range(num_entries):
-            # Randomly choose category
-            category = random.choice(['TEXT', 'IMAGE_URL'])
+            # Randomly choose category with 60% text, 40% images
+            category = random.choice(['TEXT'] * 6 + ['IMAGE_URL'] * 4)
             
             # Generate content based on category
             if category == 'TEXT':
-                content = random.choice(text_contents) + f" {fake.sentence()}"
+                prefix = random.choice(text_prefixes)
+                content = f"{prefix} {fake.paragraph(nb_sentences=2)}"
             else:
                 content = random.choice(image_urls)
 
@@ -68,6 +74,14 @@ class Command(BaseCommand):
         # Bulk create all submissions
         Submission.objects.bulk_create(submissions)
         
+        # Count entries by category
+        text_count = sum(1 for s in submissions if s.category == 'TEXT')
+        image_count = sum(1 for s in submissions if s.category == 'IMAGE_URL')
+        
         self.stdout.write(
-            self.style.SUCCESS(f'Successfully created {num_entries} mock submissions')
+            self.style.SUCCESS(
+                f'Successfully created {num_entries} mock submissions\n'
+                f'Text entries: {text_count}\n'
+                f'Image entries: {image_count}'
+            )
         ) 

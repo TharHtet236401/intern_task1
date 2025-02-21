@@ -39,7 +39,8 @@
             <button class="clear-search" 
                     hx-get="{% url 'home' %}"
                     hx-target="#content-section"
-                    hx-push-url="true">×</button>
+                    hx-include="[name='category'],[name='status']"
+                    title="Clear search">×</button>
             {% endif %}
         </div>
     </div>

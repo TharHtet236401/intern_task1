@@ -17,7 +17,7 @@ def home(request):
         page = request.GET.get('page', '1')
         
         # Base queryset
-        submissions = Submission.objects.all()
+        submissions = Submission.objects.all().order_by('-created_at')
         
         # Apply filters
         if search_query:
