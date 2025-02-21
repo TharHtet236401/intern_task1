@@ -4,7 +4,10 @@
 <div class="container">
     <div class="header-section">
         <h1>Submissions</h1>
-        <a href="{% url 'create_submission' %}" class="create-btn">Create New</a>
+        <div class="header-right">
+            <span class="count-badge">Total: {{ count }}</span>
+            <a href="{% url 'create_submission' %}" class="create-btn">Create New</a>
+        </div>
     </div>
 
     <!-- Filter Section -->
@@ -42,6 +45,7 @@
             </tr>
         </thead>
         <tbody>
+            {{ count }}
             {% for submission in submissions %}
                 <tr>
                     <td>{{ submission.content }}</td>
@@ -280,6 +284,21 @@ document.addEventListener('DOMContentLoaded', function() {
     .created-time {
         color: #666;
         font-size: 0.9em;
+    }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .count-badge {
+        background-color: #f8f9fa;
+        padding: 8px 15px;
+        border-radius: 20px;
+        color: #666;
+        font-weight: 500;
+        border: 1px solid #ddd;
     }
 </style>
 {% endblock %}
