@@ -5,17 +5,15 @@ from django.db import models
 
 class Submission(models.Model):
     CATEGORY_CHOICES = [
-        ('ACADEMIC', 'Academic Research'),
-        ('BUSINESS', 'Business Report'),
-        ('TECHNICAL', 'Technical Documentation'),
-        ('CREATIVE', 'Creative Writing'),
+        ('TEXT', 'Text'),
+        ('IMAGE_URL', 'Image URL'),
     ]
 
     content = models.CharField(max_length=200)
     category = models.CharField(
         max_length=20,
         choices=CATEGORY_CHOICES,
-        default='ACADEMIC'
+        default='TEXT'
     )
     is_reviewed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
