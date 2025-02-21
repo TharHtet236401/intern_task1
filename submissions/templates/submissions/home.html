@@ -25,33 +25,35 @@
 
     <!-- Filter Section -->
     <div class="filters">
-        <div class="filter-group">
-            <h3>Filter by Category:</h3>
-            <select hx-get="{% url 'home' %}"
-                    hx-target="#content-section"
-                    hx-trigger="change"
-                    class="filter-select"
-                    name="category">
-                <option value="" {% if not selected_category %}selected{% endif %}>All</option>
-                {% for code, name in categories %}
-                    <option value="{{ code }}" {% if selected_category == code %}selected{% endif %}>
-                        {{ name }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
+        <div class="filters-container">
+            <div class="filter-group">
+                <h3>Filter by Category:</h3>
+                <select hx-get="{% url 'home' %}"
+                        hx-target="#content-section"
+                        hx-trigger="change"
+                        class="filter-select"
+                        name="category">
+                    <option value="" {% if not selected_category %}selected{% endif %}>All</option>
+                    {% for code, name in categories %}
+                        <option value="{{ code }}" {% if selected_category == code %}selected{% endif %}>
+                            {{ name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-        <div class="filter-group">
-            <h3>Filter by Status:</h3>
-            <select hx-get="{% url 'home' %}"
-                    hx-target="#content-section"
-                    hx-trigger="change"
-                    class="filter-select"
-                    name="status">
-                <option value="" {% if not selected_status %}selected{% endif %}>All</option>
-                <option value="pending" {% if selected_status == 'pending' %}selected{% endif %}>Pending</option>
-                <option value="reviewed" {% if selected_status == 'reviewed' %}selected{% endif %}>Reviewed</option>
-            </select>
+            <div class="filter-group">
+                <h3>Filter by Status:</h3>
+                <select hx-get="{% url 'home' %}"
+                        hx-target="#content-section"
+                        hx-trigger="change"
+                        class="filter-select"
+                        name="status">
+                    <option value="" {% if not selected_status %}selected{% endif %}>All</option>
+                    <option value="pending" {% if selected_status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="reviewed" {% if selected_status == 'reviewed' %}selected{% endif %}>Reviewed</option>
+                </select>
+            </div>
         </div>
     </div>
 
@@ -80,8 +82,15 @@
         border-radius: 8px;
     }
 
+    .filters-container {
+        display: flex;
+        gap: 30px;
+        align-items: flex-start;
+    }
+
     .filter-group {
-        margin-bottom: 20px;
+        flex: 1;
+        margin-bottom: 0;  /* Remove bottom margin since we're using flex */
     }
 
     .filter-group h3 {
@@ -97,7 +106,7 @@
         background-color: white;
         font-size: 14px;
         color: #333;
-        min-width: 150px;
+        width: 100%;  /* Make select take full width of its container */
         cursor: pointer;
         transition: all 0.2s ease;
     }
