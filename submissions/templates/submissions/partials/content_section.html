@@ -1,0 +1,15 @@
+<table id="submission-table" class="submission-table">
+    <thead>
+        <tr>
+            <th>Content</th>
+            <th>Category</th>
+            <th>Is Reviewed</th>
+            <th>Created At</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% include 'submissions/partials/submission_list.html' %}
+    </tbody>
+</table>
+
+{% include 'submissions/partials/pagination.html' %} 

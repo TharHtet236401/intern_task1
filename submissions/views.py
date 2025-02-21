@@ -12,7 +12,7 @@ def home(request):
         # Get filter parameters
         category = request.GET.get('category', '')
         status = request.GET.get('status', '')
-        page = request.GET.get('page', 1)
+        page = request.GET.get('page', '1')
         
         # Base queryset
         submissions = Submission.objects.all()
@@ -32,7 +32,10 @@ def home(request):
 
         # Pagination
         paginator = Paginator(submissions, 10)  # Show 10 submissions per page
-        page_obj = paginator.get_page(page)
+        try:
+            page_obj = paginator.page(page)
+        except:
+            page_obj = paginator.page(1)
 
         context = {
             'submissions': page_obj,
@@ -44,12 +47,11 @@ def home(request):
             'pending_count': pending_count,
         }
 
-        # Check for HX-Request header instead of htmx attribute
         if request.headers.get('HX-Request'):
-            return render(request, 'submissions/partials/submission_list.html', context)
+            # Return both table content and pagination
+            return render(request, 'submissions/partials/content_section.html', context)
         return render(request, 'submissions/home.html', context)
     except Exception as e:
-        # Instead of redirecting, render the template with error message
         messages.error(request, f"An error occurred: {str(e)}")
         context = {
             'submissions': [],
