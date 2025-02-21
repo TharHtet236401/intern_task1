@@ -2,35 +2,12 @@
 
 {% block content %}
     <h1>Submissions</h1>
-    
-    <div class="category-filter">
-        <h3>Filter by Category:</h3>
-        <a href="{% url 'get_submissions' %}" {% if not selected_category %}style="font-weight: bold;"{% endif %}>
-            All Categories
-        </a>
-        {% for category_code, category_name in categories %}
-            |
-            <a href="?category={{ category_code }}" 
-               {% if selected_category == category_code %}style="font-weight: bold;"{% endif %}>
-                {{ category_name }}
-            </a>
+    <ul>
+        {% for submission in submissions %}
+            <li>{{ submission.content }}</li>
         {% endfor %}
-    </div>
+    </ul>
 
-    <div class="submissions">
-        {% if submissions %}
-            {% for submission in submissions %}
-                <div class="submission">
-                    <h3>{{ submission.title }}</h3>
-                    <p><strong>Category:</strong> {{ submission.get_category_display }}</p>
-                    <p>{{ submission.description }}</p>
-                    <small>Created: {{ submission.created_at }}</small>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>No submissions found.</p>
-        {% endif %}
-    </div>
 {% endblock %}
 
 
