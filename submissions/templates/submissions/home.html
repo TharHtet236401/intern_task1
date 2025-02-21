@@ -23,10 +23,11 @@
         </div>
     </div>
 
-    <!-- Add this before the filters section -->
+    <!-- Update the search section -->
     <div class="search-section">
         <div class="search-container">
             <input type="text" 
+                   id="search-input"
                    name="search" 
                    placeholder="Search in content..."
                    value="{{ search_query }}"
@@ -34,6 +35,7 @@
                    hx-get="{% url 'home' %}"
                    hx-trigger="keyup changed delay:500ms"
                    hx-target="#content-section"
+                   hx-include="[name='category'],[name='status']"
                    hx-push-url="true">
             {% if search_query %}
             <button class="clear-search" 
@@ -55,7 +57,7 @@
                         hx-trigger="change"
                         class="filter-select"
                         name="category"
-                        hx-include="[name='status']">
+                        hx-include="[name='status'],[name='search']">
                     <option value="" {% if not selected_category %}selected{% endif %}>All</option>
                     {% for code, name in categories %}
                         <option value="{{ code }}" {% if selected_category == code %}selected{% endif %}>
@@ -72,7 +74,7 @@
                         hx-trigger="change"
                         class="filter-select"
                         name="status"
-                        hx-include="[name='category']">
+                        hx-include="[name='category'],[name='search']">
                     <option value="" {% if not selected_status %}selected{% endif %}>All</option>
                     <option value="pending" {% if selected_status == 'pending' %}selected{% endif %}>Pending</option>
                     <option value="reviewed" {% if selected_status == 'reviewed' %}selected{% endif %}>Reviewed</option>
@@ -99,6 +101,16 @@
         {% include 'submissions/partials/content_section.html' %}
     </div>
 </div>
+
+<!-- Add this script at the end of your template -->
+<script>
+    function clearSearch() {
+        const searchInput = document.getElementById('search-input');
+        searchInput.value = '';
+        // Trigger HTMX request
+        htmx.trigger(searchInput, 'changed');
+    }
+</script>
 
 <style>
     .container {
@@ -409,10 +421,12 @@
         align-items: center;
         justify-content: center;
         border-radius: 50%;
+        transition: all 0.2s ease;
     }
 
     .clear-search:hover {
         background-color: #f0f0f0;
+        color: #333;
     }
 
     .refresh-btn {
