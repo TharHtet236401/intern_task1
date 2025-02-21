@@ -27,29 +27,31 @@
     <div class="filters">
         <div class="filter-group">
             <h3>Filter by Category:</h3>
-            <a hx-get="{% url 'home' %}" 
-               hx-target="#content-section" 
-               class="filter-link {% if not selected_category %}active{% endif %}">All</a>
-            {% for code, name in categories %}
-                <a hx-get="{% url 'home' %}?category={{ code }}{% if selected_status %}&status={{ selected_status }}{% endif %}"
-                   hx-target="#content-section"
-                   class="filter-link {% if selected_category == code %}active{% endif %}">
-                    {{ name }}
-                </a>
-            {% endfor %}
+            <select hx-get="{% url 'home' %}"
+                    hx-target="#content-section"
+                    hx-trigger="change"
+                    class="filter-select"
+                    name="category">
+                <option value="" {% if not selected_category %}selected{% endif %}>All</option>
+                {% for code, name in categories %}
+                    <option value="{{ code }}" {% if selected_category == code %}selected{% endif %}>
+                        {{ name }}
+                    </option>
+                {% endfor %}
+            </select>
         </div>
 
         <div class="filter-group">
             <h3>Filter by Status:</h3>
-            <a hx-get="{% url 'home' %}{% if selected_category %}?category={{ selected_category }}{% endif %}"
-               hx-target="#content-section"
-               class="filter-link {% if not selected_status %}active{% endif %}">All</a>
-            <a hx-get="{% url 'home' %}?status=pending{% if selected_category %}&category={{ selected_category }}{% endif %}"
-               hx-target="#content-section"
-               class="filter-link {% if selected_status == 'pending' %}active{% endif %}">Pending</a>
-            <a hx-get="{% url 'home' %}?status=reviewed{% if selected_category %}&category={{ selected_category }}{% endif %}"
-               hx-target="#content-section"
-               class="filter-link {% if selected_status == 'reviewed' %}active{% endif %}">Reviewed</a>
+            <select hx-get="{% url 'home' %}"
+                    hx-target="#content-section"
+                    hx-trigger="change"
+                    class="filter-select"
+                    name="status">
+                <option value="" {% if not selected_status %}selected{% endif %}>All</option>
+                <option value="pending" {% if selected_status == 'pending' %}selected{% endif %}>Pending</option>
+                <option value="reviewed" {% if selected_status == 'reviewed' %}selected{% endif %}>Reviewed</option>
+            </select>
         </div>
     </div>
 
@@ -88,28 +90,26 @@
         font-size: 16px;
     }
 
-    .filter-link {
-        display: inline-block;
-        padding: 6px 12px;
-        margin: 0 5px 5px 0;
-        border-radius: 4px;
-        text-decoration: none;
-        color: #666;
-        background-color: #fff;
+    .filter-select {
+        padding: 8px 12px;
         border: 1px solid #ddd;
-        transition: all 0.3s ease;
+        border-radius: 4px;
+        background-color: white;
+        font-size: 14px;
+        color: #333;
+        min-width: 150px;
         cursor: pointer;
+        transition: all 0.2s ease;
     }
 
-    .filter-link:hover {
-        background-color: #f0f0f0;
-        cursor: pointer;
-    }
-
-    .filter-link.active {
-        background-color: #007bff;
-        color: white;
+    .filter-select:hover {
         border-color: #007bff;
+    }
+
+    .filter-select:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0,123,255,0.1);
     }
 
     .submission-table {

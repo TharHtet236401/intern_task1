@@ -17,6 +17,7 @@ def home(request):
         # Base queryset
         submissions = Submission.objects.all()
         
+        # Apply filters
         if category:
             submissions = submissions.filter(category=category)
 
@@ -25,13 +26,13 @@ def home(request):
         elif status == 'pending':
             submissions = submissions.filter(is_reviewed=False)
 
-        # Get counts for different states
+        # Get counts
         total_count = submissions.count()
         reviewed_count = submissions.filter(is_reviewed=True).count()
         pending_count = submissions.filter(is_reviewed=False).count()
 
         # Pagination
-        paginator = Paginator(submissions, 10)  # Show 10 submissions per page
+        paginator = Paginator(submissions, 10)
         try:
             page_obj = paginator.page(page)
         except:
@@ -48,7 +49,6 @@ def home(request):
         }
 
         if request.headers.get('HX-Request'):
-            # Return both table content and pagination
             return render(request, 'submissions/partials/content_section.html', context)
         return render(request, 'submissions/home.html', context)
     except Exception as e:
@@ -63,7 +63,7 @@ def home(request):
             'pending_count': 0,
         }
         if request.headers.get('HX-Request'):
-            return render(request, 'submissions/partials/submission_list.html', context)
+            return render(request, 'submissions/partials/content_section.html', context)
         return render(request, 'submissions/home.html', context)
 
 def create_submission_view(request):
