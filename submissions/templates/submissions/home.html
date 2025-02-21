@@ -52,7 +52,10 @@
                             <option value="false" {% if not submission.is_reviewed %}selected{% endif %}>No</option>
                         </select>
                     </td>
-                    <td>{{ submission.created_at|date:"j.n.y" }}</td>
+                    <td>
+                        <span class="created-date">{{ submission.created_at|date:"j.n.y" }}</span>
+                        <span class="created-time">{{ submission.created_at|time:"H:i:s" }}</span>
+                    </td>
                 </tr>
             {% empty %}
                 <tr>
@@ -267,6 +270,16 @@ document.addEventListener('DOMContentLoaded', function() {
     @keyframes flash {
         0% { background-color: #28a745; }
         100% { background-color: white; }
+    }
+
+    .created-date {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .created-time {
+        color: #666;
+        font-size: 0.9em;
     }
 </style>
 {% endblock %}
