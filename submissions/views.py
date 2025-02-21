@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.core.paginator import Paginator
+from django.template.loader import render_to_string
 from .models import Submission
 from django.contrib import messages
 from .forms import SubmissionForm
@@ -42,10 +43,26 @@ def home(request):
             'reviewed_count': reviewed_count,
             'pending_count': pending_count,
         }
+
+        # Check for HX-Request header instead of htmx attribute
+        if request.headers.get('HX-Request'):
+            return render(request, 'submissions/partials/submission_list.html', context)
         return render(request, 'submissions/home.html', context)
     except Exception as e:
+        # Instead of redirecting, render the template with error message
         messages.error(request, f"An error occurred: {str(e)}")
-        return redirect('home')
+        context = {
+            'submissions': [],
+            'categories': Submission.CATEGORY_CHOICES,
+            'selected_category': '',
+            'selected_status': '',
+            'count': 0,
+            'reviewed_count': 0,
+            'pending_count': 0,
+        }
+        if request.headers.get('HX-Request'):
+            return render(request, 'submissions/partials/submission_list.html', context)
+        return render(request, 'submissions/home.html', context)
 
 def create_submission_view(request):
     if request.method == 'POST':
@@ -64,7 +81,13 @@ def update_status(request, submission_id):
         new_status = request.POST.get('status') == 'true'
         submission.is_reviewed = new_status
         submission.save()
+        
+        if request.headers.get('HX-Request'):
+            return HttpResponse(
+                render_to_string('submissions/partials/status_cell.html', 
+                {'submission': submission})
+            )
         return JsonResponse({'success': True})
     except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
+        return HttpResponse("Error updating status", status=400)
 

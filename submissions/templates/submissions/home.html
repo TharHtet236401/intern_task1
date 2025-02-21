@@ -27,9 +27,12 @@
     <div class="filters">
         <div class="filter-group">
             <h3>Filter by Category:</h3>
-            <a href="{% url 'home' %}" class="filter-link {% if not selected_category %}active{% endif %}">All</a>
+            <a hx-get="{% url 'home' %}" 
+               hx-target="#submission-table tbody" 
+               class="filter-link {% if not selected_category %}active{% endif %}">All</a>
             {% for code, name in categories %}
-                <a href="?category={{ code }}{% if selected_status %}&status={{ selected_status }}{% endif %}" 
+                <a hx-get="{% url 'home' %}?category={{ code }}{% if selected_status %}&status={{ selected_status }}{% endif %}"
+                   hx-target="#submission-table tbody"
                    class="filter-link {% if selected_category == code %}active{% endif %}">
                     {{ name }}
                 </a>
@@ -38,17 +41,20 @@
 
         <div class="filter-group">
             <h3>Filter by Status:</h3>
-            <a href="{% url 'home' %}{% if selected_category %}?category={{ selected_category }}{% endif %}" 
+            <a hx-get="{% url 'home' %}{% if selected_category %}?category={{ selected_category }}{% endif %}"
+               hx-target="#submission-table tbody"
                class="filter-link {% if not selected_status %}active{% endif %}">All</a>
-            <a href="?status=pending{% if selected_category %}&category={{ selected_category }}{% endif %}" 
+            <a hx-get="{% url 'home' %}?status=pending{% if selected_category %}&category={{ selected_category }}{% endif %}"
+               hx-target="#submission-table tbody"
                class="filter-link {% if selected_status == 'pending' %}active{% endif %}">Pending</a>
-            <a href="?status=reviewed{% if selected_category %}&category={{ selected_category }}{% endif %}" 
+            <a hx-get="{% url 'home' %}?status=reviewed{% if selected_category %}&category={{ selected_category }}{% endif %}"
+               hx-target="#submission-table tbody"
                class="filter-link {% if selected_status == 'reviewed' %}active{% endif %}">Reviewed</a>
         </div>
     </div>
 
     <!-- Table Section -->
-    <table class="submission-table">
+    <table id="submission-table" class="submission-table">
         <thead>
             <tr>
                 <th>Content</th>
@@ -57,27 +63,8 @@
                 <th>Created At</th>
             </tr>
         </thead>
-        <tbody>
-            {% for submission in submissions %}
-                <tr>
-                    <td>{{ submission.content }}</td>
-                    <td>{{ submission.get_category_display }}</td>
-                    <td>
-                        <select class="status-select" data-submission-id="{{ submission.id }}" data-status-type="reviewed">
-                            <option value="true" {% if submission.is_reviewed %}selected{% endif %}>Yes</option>
-                            <option value="false" {% if not submission.is_reviewed %}selected{% endif %}>No</option>
-                        </select>
-                    </td>
-                    <td>
-                        <span class="created-date">{{ submission.created_at|date:"j.n.y" }}</span>
-                        <span class="created-time">{{ submission.created_at|time:"H:i:s" }}</span>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="4" class="no-data">No submissions found.</td>
-                </tr>
-            {% endfor %}
+        <tbody hx-target="this" hx-swap="innerHTML">
+            {% include 'submissions/partials/submission_list.html' %}
         </tbody>
     </table>
 
@@ -85,9 +72,11 @@
     {% if submissions.paginator.num_pages > 1 %}
     <div class="pagination">
         {% if submissions.has_previous %}
-            <a href="?page=1{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}" 
+            <a hx-get="?page=1{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}"
+               hx-target="#submission-table tbody"
                class="page-link first">&laquo; First</a>
-            <a href="?page={{ submissions.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}" 
+            <a hx-get="?page={{ submissions.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}"
+               hx-target="#submission-table tbody"
                class="page-link">&lsaquo; Previous</a>
         {% endif %}
 
@@ -96,67 +85,16 @@
         </span>
 
         {% if submissions.has_next %}
-            <a href="?page={{ submissions.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}" 
+            <a hx-get="?page={{ submissions.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}"
+               hx-target="#submission-table tbody"
                class="page-link">Next &rsaquo;</a>
-            <a href="?page={{ submissions.paginator.num_pages }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}" 
+            <a hx-get="?page={{ submissions.paginator.num_pages }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}"
+               hx-target="#submission-table tbody"
                class="page-link last">Last &raquo;</a>
         {% endif %}
     </div>
     {% endif %}
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const statusSelects = document.querySelectorAll('.status-select');
-    
-    statusSelects.forEach(select => {
-        select.addEventListener('change', function() {
-            const submissionId = this.dataset.submissionId;
-            const statusType = this.dataset.statusType;
-            const newStatus = this.value;
-            
-            fetch(`/update-status/${submissionId}/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: `status_type=${statusType}&status=${newStatus}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Optional: Add visual feedback
-                    select.classList.add('updated');
-                    setTimeout(() => select.classList.remove('updated'), 1000);
-                } else {
-                    alert('Error updating status');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error updating status');
-            });
-        });
-    });
-
-    // Function to get CSRF token
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-});
-</script>
 
 <style>
     .container {
