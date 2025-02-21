@@ -47,19 +47,24 @@
                     <td>{{ submission.content }}</td>
                     <td>{{ submission.get_category_display }}</td>
                     <td>
-                        {% if submission.is_verified %}
-                            <span class="status verified">Verified</span>
-                        {% elif submission.is_reviewed %}
-                            <span class="status reviewed">Reviewed</span>
+                        {% if submission.is_reviewed %}
+                            <span class="status reviewed">Yes</span>
                         {% else %}
-                            <span class="status pending">Pending</span>
+                            <span class="status pending">No</span>
                         {% endif %}
                     </td>
-                    <td>{{ submission.created_at|date:"M d, Y" }}</td>
+                    <td>
+                        {% if submission.is_verified %}
+                            <span class="status verified">Yes</span>
+                        {% else %}
+                            <span class="status pending">No</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ submission.created_at|date:"j.n.y" }}</td>
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="4" class="no-data">No submissions found.</td>
+                    <td colspan="5" class="no-data">No submissions found.</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -143,10 +148,13 @@
     }
 
     .status {
-        padding: 6px 12px;
-        border-radius: 20px;
+        padding: 4px 8px;
+        border-radius: 4px;
         font-size: 14px;
         font-weight: 500;
+        display: inline-block;
+        min-width: 60px;
+        text-align: center;
     }
 
     .status.verified {
