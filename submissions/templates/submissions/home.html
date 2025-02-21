@@ -28,11 +28,11 @@
         <div class="filter-group">
             <h3>Filter by Category:</h3>
             <a hx-get="{% url 'home' %}" 
-               hx-target="#submission-table tbody" 
+               hx-target="#content-section" 
                class="filter-link {% if not selected_category %}active{% endif %}">All</a>
             {% for code, name in categories %}
                 <a hx-get="{% url 'home' %}?category={{ code }}{% if selected_status %}&status={{ selected_status }}{% endif %}"
-                   hx-target="#submission-table tbody"
+                   hx-target="#content-section"
                    class="filter-link {% if selected_category == code %}active{% endif %}">
                     {{ name }}
                 </a>
@@ -42,36 +42,20 @@
         <div class="filter-group">
             <h3>Filter by Status:</h3>
             <a hx-get="{% url 'home' %}{% if selected_category %}?category={{ selected_category }}{% endif %}"
-               hx-target="#submission-table tbody"
+               hx-target="#content-section"
                class="filter-link {% if not selected_status %}active{% endif %}">All</a>
             <a hx-get="{% url 'home' %}?status=pending{% if selected_category %}&category={{ selected_category }}{% endif %}"
-               hx-target="#submission-table tbody"
+               hx-target="#content-section"
                class="filter-link {% if selected_status == 'pending' %}active{% endif %}">Pending</a>
             <a hx-get="{% url 'home' %}?status=reviewed{% if selected_category %}&category={{ selected_category }}{% endif %}"
-               hx-target="#submission-table tbody"
+               hx-target="#content-section"
                class="filter-link {% if selected_status == 'reviewed' %}active{% endif %}">Reviewed</a>
         </div>
     </div>
 
     <!-- Content Section -->
     <div id="content-section">
-        <!-- Table Section -->
-        <table id="submission-table" class="submission-table">
-            <thead>
-                <tr>
-                    <th>Content</th>
-                    <th>Category</th>
-                    <th>Is Reviewed</th>
-                    <th>Created At</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% include 'submissions/partials/submission_list.html' %}
-            </tbody>
-        </table>
-
-        <!-- Pagination -->
-        {% include 'submissions/partials/pagination.html' %}
+        {% include 'submissions/partials/content_section.html' %}
     </div>
 </div>
 
