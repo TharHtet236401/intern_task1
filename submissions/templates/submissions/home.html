@@ -7,155 +7,109 @@
         <div class="header-right">
             <div class="stats-container">
                 <div class="stat-box">
-                    <span class="stat-label">Total Entries</span>
-                    <span class="stat-value">{{ count }}</span>
+                    <span class="stat-label">Total Results</span>
+                    <span class="stat-value">{{ total_count }}</span>
                 </div>
                 <div class="stat-box">
-                    <span class="stat-label">Reviewed</span>
-                    <span class="stat-value">{{ reviewed_count }}</span>
+                    <span class="stat-label">Text</span>
+                    <span class="stat-value">{{ text_count }}</span>
                 </div>
                 <div class="stat-box">
-                    <span class="stat-label">Pending</span>
-                    <span class="stat-value">{{ pending_count }}</span>
+                    <span class="stat-label">Image URL</span>
+                    <span class="stat-value">{{ image_count }}</span>
                 </div>
             </div>
             <a href="{% url 'create_submission' %}" class="create-btn">Create New</a>
         </div>
     </div>
 
+    <!-- Update the search section -->
+    <div class="search-section">
+        <div class="search-container">
+            <input type="text" 
+                   id="search-input"
+                   name="search" 
+                   placeholder="Search in content..."
+                   value="{{ search_query }}"
+                   class="search-input"
+                   hx-get="{% url 'home' %}"
+                   hx-trigger="keyup changed delay:500ms"
+                   hx-target="#content-section"
+                   hx-include="[name='category'],[name='status']"
+                   hx-push-url="true">
+            {% if search_query %}
+            <button class="clear-search" 
+                    hx-get="{% url 'home' %}"
+                    hx-target="#content-section"
+                    hx-include="[name='category'],[name='status']"
+                    title="Clear search">×</button>
+            {% endif %}
+        </div>
+    </div>
+
     <!-- Filter Section -->
     <div class="filters">
-        <div class="filter-group">
-            <h3>Filter by Category:</h3>
-            <a href="{% url 'home' %}" class="filter-link {% if not selected_category %}active{% endif %}">All</a>
-            {% for code, name in categories %}
-                <a href="?category={{ code }}{% if selected_status %}&status={{ selected_status }}{% endif %}" 
-                   class="filter-link {% if selected_category == code %}active{% endif %}">
-                    {{ name }}
-                </a>
-            {% endfor %}
-        </div>
+        <div class="filters-container">
+            <div class="filter-group">
+                <h3>Filter by Category:</h3>
+                <select hx-get="{% url 'home' %}"
+                        hx-target="#content-section"
+                        hx-trigger="change"
+                        class="filter-select"
+                        name="category"
+                        hx-include="[name='status'],[name='search']">
+                    <option value="" {% if not selected_category %}selected{% endif %}>All</option>
+                    {% for code, name in categories %}
+                        <option value="{{ code }}" {% if selected_category == code %}selected{% endif %}>
+                            {{ name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-        <div class="filter-group">
-            <h3>Filter by Status:</h3>
-            <a href="{% url 'home' %}{% if selected_category %}?category={{ selected_category }}{% endif %}" 
-               class="filter-link {% if not selected_status %}active{% endif %}">All</a>
-            <a href="?status=pending{% if selected_category %}&category={{ selected_category }}{% endif %}" 
-               class="filter-link {% if selected_status == 'pending' %}active{% endif %}">Pending</a>
-            <a href="?status=reviewed{% if selected_category %}&category={{ selected_category }}{% endif %}" 
-               class="filter-link {% if selected_status == 'reviewed' %}active{% endif %}">Reviewed</a>
+            <div class="filter-group">
+                <h3>Filter by Status:</h3>
+                <select hx-get="{% url 'home' %}"
+                        hx-target="#content-section"
+                        hx-trigger="change"
+                        class="filter-select"
+                        name="status"
+                        hx-include="[name='category'],[name='search']">
+                    <option value="" {% if not selected_status %}selected{% endif %}>All</option>
+                    <option value="pending" {% if selected_status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="reviewed" {% if selected_status == 'reviewed' %}selected{% endif %}>Reviewed</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <h3>&nbsp;</h3>
+                <button class="refresh-btn"
+                        hx-get="{% url 'home' %}"
+                        hx-target="#content-section"
+                        title="Reset filters">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/>
+                    </svg>
+                    <span>Reset</span>
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Table Section -->
-    <table class="submission-table">
-        <thead>
-            <tr>
-                <th>Content</th>
-                <th>Category</th>
-                <th>Is Reviewed</th>
-                <th>Created At</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for submission in submissions %}
-                <tr>
-                    <td>{{ submission.content }}</td>
-                    <td>{{ submission.get_category_display }}</td>
-                    <td>
-                        <select class="status-select" data-submission-id="{{ submission.id }}" data-status-type="reviewed">
-                            <option value="true" {% if submission.is_reviewed %}selected{% endif %}>Yes</option>
-                            <option value="false" {% if not submission.is_reviewed %}selected{% endif %}>No</option>
-                        </select>
-                    </td>
-                    <td>
-                        <span class="created-date">{{ submission.created_at|date:"j.n.y" }}</span>
-                        <span class="created-time">{{ submission.created_at|time:"H:i:s" }}</span>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="4" class="no-data">No submissions found.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <!-- Pagination -->
-    {% if submissions.paginator.num_pages > 1 %}
-    <div class="pagination">
-        {% if submissions.has_previous %}
-            <a href="?page=1{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}" 
-               class="page-link first">&laquo; First</a>
-            <a href="?page={{ submissions.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}" 
-               class="page-link">&lsaquo; Previous</a>
-        {% endif %}
-
-        <span class="current-page">
-            Page {{ submissions.number }} of {{ submissions.paginator.num_pages }}
-        </span>
-
-        {% if submissions.has_next %}
-            <a href="?page={{ submissions.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}" 
-               class="page-link">Next &rsaquo;</a>
-            <a href="?page={{ submissions.paginator.num_pages }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}" 
-               class="page-link last">Last &raquo;</a>
-        {% endif %}
+    <!-- Content Section -->
+    <div id="content-section">
+        {% include 'submissions/partials/content_section.html' %}
     </div>
-    {% endif %}
 </div>
 
+<!-- Add this script at the end of your template -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const statusSelects = document.querySelectorAll('.status-select');
-    
-    statusSelects.forEach(select => {
-        select.addEventListener('change', function() {
-            const submissionId = this.dataset.submissionId;
-            const statusType = this.dataset.statusType;
-            const newStatus = this.value;
-            
-            fetch(`/update-status/${submissionId}/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: `status_type=${statusType}&status=${newStatus}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Optional: Add visual feedback
-                    select.classList.add('updated');
-                    setTimeout(() => select.classList.remove('updated'), 1000);
-                } else {
-                    alert('Error updating status');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error updating status');
-            });
-        });
-    });
-
-    // Function to get CSRF token
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
+    function clearSearch() {
+        const searchInput = document.getElementById('search-input');
+        searchInput.value = '';
+        // Trigger HTMX request
+        htmx.trigger(searchInput, 'changed');
     }
-});
 </script>
 
 <style>
@@ -173,40 +127,49 @@ document.addEventListener('DOMContentLoaded', function() {
     .filters {
         margin-bottom: 30px;
         background-color: #f8f9fa;
-        padding: 20px;
+        padding: 15px;
         border-radius: 8px;
+        width: fit-content;
+        margin-left: auto;
+    }
+
+    .filters-container {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
     }
 
     .filter-group {
-        margin-bottom: 20px;
+        flex: 0 1 auto;
+        margin-bottom: 0;
     }
 
     .filter-group h3 {
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         color: #555;
-        font-size: 16px;
+        font-size: 14px;
     }
 
-    .filter-link {
-        display: inline-block;
-        padding: 6px 12px;
-        margin: 0 5px 5px 0;
-        border-radius: 4px;
-        text-decoration: none;
-        color: #666;
-        background-color: #fff;
+    .filter-select {
+        padding: 6px 10px;
         border: 1px solid #ddd;
-        transition: all 0.3s ease;
+        border-radius: 4px;
+        background-color: white;
+        font-size: 14px;
+        color: #333;
+        width: 180px;
+        cursor: pointer;
+        transition: all 0.2s ease;
     }
 
-    .filter-link:hover {
-        background-color: #f0f0f0;
-    }
-
-    .filter-link.active {
-        background-color: #007bff;
-        color: white;
+    .filter-select:hover {
         border-color: #007bff;
+    }
+
+    .filter-select:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0,123,255,0.1);
     }
 
     .submission-table {
@@ -215,6 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
         margin: 20px 0;
         font-size: 16px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        table-layout: fixed;
     }
 
     .submission-table th,
@@ -222,6 +186,29 @@ document.addEventListener('DOMContentLoaded', function() {
         padding: 12px;
         text-align: left;
         border-bottom: 1px solid #ddd;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .submission-table th:nth-child(1),
+    .submission-table td:nth-child(1) {
+        width: 60%;
+    }
+
+    .submission-table th:nth-child(2),
+    .submission-table td:nth-child(2) {
+        width: 12%;
+    }
+
+    .submission-table th:nth-child(3),
+    .submission-table td:nth-child(3) {
+        width: 12%;
+    }
+
+    .submission-table th:nth-child(4),
+    .submission-table td:nth-child(4) {
+        width: 16%;
     }
 
     .submission-table th {
@@ -313,7 +300,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     .created-date {
         display: inline-block;
-        margin-right: 10px;
+        margin-right: 5px;
     }
 
     .created-time {
@@ -391,6 +378,95 @@ document.addEventListener('DOMContentLoaded', function() {
 
     .first, .last {
         background-color: #f8f9fa;
+    }
+
+    .search-section {
+        margin-bottom: 20px;
+    }
+
+    .search-container {
+        position: relative;
+        max-width: 400px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0,123,255,0.1);
+    }
+
+    .clear-search {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #666;
+        cursor: pointer;
+        font-size: 18px;
+        padding: 0;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+    }
+
+    .clear-search:hover {
+        background-color: #f0f0f0;
+        color: #333;
+    }
+
+    .refresh-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        color: #666;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s ease;
+    }
+
+    .refresh-btn:hover {
+        background-color: #e9ecef;
+        border-color: #ced4da;
+        color: #333;
+    }
+
+    .refresh-btn svg {
+        transition: transform 0.3s ease;
+    }
+
+    .refresh-btn:hover svg {
+        transform: rotate(180deg);
+    }
+
+    .submission-table td {
+        position: relative;
+    }
+
+    .submission-table td:hover {
+        white-space: normal;
+        overflow: visible;
+        background-color: #fff;
+        z-index: 1;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 </style>
 {% endblock %}

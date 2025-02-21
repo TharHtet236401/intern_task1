@@ -1,0 +1,7 @@
+<select class="status-select" 
+        hx-post="{% url 'update_status' submission.id %}"
+        hx-trigger="change"
+        name="status">
+    <option value="true" {% if submission.is_reviewed %}selected{% endif %}>Yes</option>
+    <option value="false" {% if not submission.is_reviewed %}selected{% endif %}>No</option>
+</select> 

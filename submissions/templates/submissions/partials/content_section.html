@@ -1,0 +1,69 @@
+<table id="submission-table" class="submission-table">
+    <thead>
+        <tr>
+            <th>Content</th>
+            <th>Category</th>
+            <th>Is Reviewed</th>
+            <th>Created At</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% include 'submissions/partials/submission_list.html' %}
+    </tbody>
+</table>
+
+{% if submissions.paginator.num_pages > 1 %}
+<div class="pagination">
+    {% if submissions.has_previous %}
+        <a hx-get="{% url 'home' %}?page={{ submissions.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}"
+           hx-target="#content-section"
+           class="page-btn prev-btn">&larr; Previous</a>
+    {% endif %}
+
+    <span class="page-info">Page {{ submissions.number }} of {{ submissions.paginator.num_pages }}</span>
+
+    {% if submissions.has_next %}
+        <a hx-get="{% url 'home' %}?page={{ submissions.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}"
+           hx-target="#content-section"
+           class="page-btn next-btn">Next &rarr;</a>
+    {% endif %}
+</div>
+{% endif %}
+
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        margin-top: 30px;
+        padding: 20px 0;
+    }
+
+    .page-btn {
+        padding: 8px 16px;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        color: #007bff;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        font-weight: 500;
+    }
+
+    .page-btn:hover {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: white;
+    }
+
+    .page-info {
+        color: #6c757d;
+        font-size: 0.95em;
+    }
+
+    .prev-btn, .next-btn {
+        min-width: 100px;
+        text-align: center;
+    }
+</style> 

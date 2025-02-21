@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.core.paginator import Paginator
+from django.template.loader import render_to_string
+from django.db.models import Count
 from .models import Submission
 from django.contrib import messages
 from .forms import SubmissionForm
@@ -11,11 +13,16 @@ def home(request):
         # Get filter parameters
         category = request.GET.get('category', '')
         status = request.GET.get('status', '')
-        page = request.GET.get('page', 1)
+        search_query = request.GET.get('search', '')
+        page = request.GET.get('page', '1')
         
         # Base queryset
-        submissions = Submission.objects.all()
+        submissions = Submission.objects.all().order_by('-created_at')
         
+        # Apply filters
+        if search_query:
+            submissions = submissions.filter(content__icontains=search_query)
+            
         if category:
             submissions = submissions.filter(category=category)
 
@@ -24,28 +31,46 @@ def home(request):
         elif status == 'pending':
             submissions = submissions.filter(is_reviewed=False)
 
-        # Get counts for different states
-        total_count = submissions.count()
-        reviewed_count = submissions.filter(is_reviewed=True).count()
-        pending_count = submissions.filter(is_reviewed=False).count()
+        # Get filtered counts by category
+        text_count = submissions.filter(category='TEXT').count()
+        image_count = submissions.filter(category='IMAGE_URL').count()
+        total_count = text_count + image_count
 
         # Pagination
-        paginator = Paginator(submissions, 10)  # Show 10 submissions per page
-        page_obj = paginator.get_page(page)
+        paginator = Paginator(submissions, 10)
+        try:
+            page_obj = paginator.page(page)
+        except:
+            page_obj = paginator.page(1)
 
         context = {
             'submissions': page_obj,
             'categories': Submission.CATEGORY_CHOICES,
             'selected_category': category,
             'selected_status': status,
-            'count': total_count,
-            'reviewed_count': reviewed_count,
-            'pending_count': pending_count,
+            'search_query': search_query,
+            'total_count': total_count,
+            'text_count': text_count,
+            'image_count': image_count,
         }
+
+        if request.headers.get('HX-Request'):
+            return render(request, 'submissions/partials/content_section.html', context)
         return render(request, 'submissions/home.html', context)
     except Exception as e:
         messages.error(request, f"An error occurred: {str(e)}")
-        return redirect('home')
+        context = {
+            'submissions': [],
+            'categories': Submission.CATEGORY_CHOICES,
+            'selected_category': '',
+            'selected_status': '',
+            'total_count': 0,
+            'text_count': 0,
+            'image_count': 0,
+        }
+        if request.headers.get('HX-Request'):
+            return render(request, 'submissions/partials/content_section.html', context)
+        return render(request, 'submissions/home.html', context)
 
 def create_submission_view(request):
     if request.method == 'POST':
@@ -64,7 +89,13 @@ def update_status(request, submission_id):
         new_status = request.POST.get('status') == 'true'
         submission.is_reviewed = new_status
         submission.save()
+        
+        if request.headers.get('HX-Request'):
+            return HttpResponse(
+                render_to_string('submissions/partials/status_cell.html', 
+                {'submission': submission})
+            )
         return JsonResponse({'success': True})
     except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
+        return HttpResponse("Error updating status", status=400)
 

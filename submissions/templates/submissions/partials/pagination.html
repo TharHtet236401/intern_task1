@@ -1,0 +1,25 @@
+{% if submissions.paginator.num_pages > 1 %}
+<div class="pagination">
+    {% if submissions.has_previous %}
+        <a hx-get="{% url 'home' %}?page=1{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}"
+           hx-target="#content-section"
+           class="page-link first">&laquo; First</a>
+        <a hx-get="{% url 'home' %}?page={{ submissions.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}"
+           hx-target="#content-section"
+           class="page-link">&lsaquo; Previous</a>
+    {% endif %}
+
+    <span class="current-page">
+        Page {{ submissions.number }} of {{ submissions.paginator.num_pages }}
+    </span>
+
+    {% if submissions.has_next %}
+        <a hx-get="{% url 'home' %}?page={{ submissions.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}"
+           hx-target="#content-section"
+           class="page-link">Next &rsaquo;</a>
+        <a hx-get="{% url 'home' %}?page={{ submissions.paginator.num_pages }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}"
+           hx-target="#content-section"
+           class="page-link last">Last &raquo;</a>
+    {% endif %}
+</div>
+{% endif %} 
