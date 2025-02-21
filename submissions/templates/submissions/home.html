@@ -23,6 +23,27 @@
         </div>
     </div>
 
+    <!-- Add this before the filters section -->
+    <div class="search-section">
+        <div class="search-container">
+            <input type="text" 
+                   name="search" 
+                   placeholder="Search in content..."
+                   value="{{ search_query }}"
+                   class="search-input"
+                   hx-get="{% url 'home' %}"
+                   hx-trigger="keyup changed delay:500ms"
+                   hx-target="#content-section"
+                   hx-push-url="true">
+            {% if search_query %}
+            <button class="clear-search" 
+                    hx-get="{% url 'home' %}"
+                    hx-target="#content-section"
+                    hx-push-url="true">×</button>
+            {% endif %}
+        </div>
+    </div>
+
     <!-- Filter Section -->
     <div class="filters">
         <div class="filters-container">
@@ -35,7 +56,9 @@
                         name="category">
                     <option value="" {% if not selected_category %}selected{% endif %}>All</option>
                     {% for code, name in categories %}
-                        <option value="{{ code }}" {% if selected_category == code %}selected{% endif %}>
+                        <option value="{{ code }}" 
+                                {% if selected_category == code %}selected{% endif %}
+                                hx-get="{% url 'home' %}?category={{ code }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}">
                             {{ name }}
                         </option>
                     {% endfor %}
@@ -50,8 +73,16 @@
                         class="filter-select"
                         name="status">
                     <option value="" {% if not selected_status %}selected{% endif %}>All</option>
-                    <option value="pending" {% if selected_status == 'pending' %}selected{% endif %}>Pending</option>
-                    <option value="reviewed" {% if selected_status == 'reviewed' %}selected{% endif %}>Reviewed</option>
+                    <option value="pending" 
+                            {% if selected_status == 'pending' %}selected{% endif %}
+                            hx-get="{% url 'home' %}?status=pending{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">
+                        Pending
+                    </option>
+                    <option value="reviewed" 
+                            {% if selected_status == 'reviewed' %}selected{% endif %}
+                            hx-get="{% url 'home' %}?status=reviewed{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">
+                        Reviewed
+                    </option>
                 </select>
             </div>
         </div>
@@ -305,6 +336,53 @@
 
     .first, .last {
         background-color: #f8f9fa;
+    }
+
+    .search-section {
+        margin-bottom: 20px;
+    }
+
+    .search-container {
+        position: relative;
+        max-width: 400px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0,123,255,0.1);
+    }
+
+    .clear-search {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #666;
+        cursor: pointer;
+        font-size: 18px;
+        padding: 0;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+
+    .clear-search:hover {
+        background-color: #f0f0f0;
     }
 </style>
 {% endblock %}

@@ -13,12 +13,16 @@ def home(request):
         # Get filter parameters
         category = request.GET.get('category', '')
         status = request.GET.get('status', '')
+        search_query = request.GET.get('search', '')
         page = request.GET.get('page', '1')
         
         # Base queryset
         submissions = Submission.objects.all()
         
         # Apply filters
+        if search_query:
+            submissions = submissions.filter(content__icontains=search_query)
+            
         if category:
             submissions = submissions.filter(category=category)
 
@@ -44,6 +48,7 @@ def home(request):
             'categories': Submission.CATEGORY_CHOICES,
             'selected_category': category,
             'selected_status': status,
+            'search_query': search_query,
             'total_count': total_count,
             'text_count': text_count,
             'image_count': image_count,
