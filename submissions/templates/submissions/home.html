@@ -7,16 +7,16 @@
         <div class="header-right">
             <div class="stats-container">
                 <div class="stat-box">
-                    <span class="stat-label">Total Entries</span>
-                    <span class="stat-value">{{ count }}</span>
+                    <span class="stat-label">Total Results</span>
+                    <span class="stat-value">{{ total_count }}</span>
                 </div>
                 <div class="stat-box">
-                    <span class="stat-label">Reviewed</span>
-                    <span class="stat-value">{{ reviewed_count }}</span>
+                    <span class="stat-label">Text</span>
+                    <span class="stat-value">{{ text_count }}</span>
                 </div>
                 <div class="stat-box">
-                    <span class="stat-label">Pending</span>
-                    <span class="stat-value">{{ pending_count }}</span>
+                    <span class="stat-label">Image URL</span>
+                    <span class="stat-value">{{ image_count }}</span>
                 </div>
             </div>
             <a href="{% url 'create_submission' %}" class="create-btn">Create New</a>

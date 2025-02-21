@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.core.paginator import Paginator
 from django.template.loader import render_to_string
+from django.db.models import Count
 from .models import Submission
 from django.contrib import messages
 from .forms import SubmissionForm
@@ -26,10 +27,10 @@ def home(request):
         elif status == 'pending':
             submissions = submissions.filter(is_reviewed=False)
 
-        # Get counts
-        total_count = submissions.count()
-        reviewed_count = submissions.filter(is_reviewed=True).count()
-        pending_count = submissions.filter(is_reviewed=False).count()
+        # Get filtered counts by category
+        text_count = submissions.filter(category='TEXT').count()
+        image_count = submissions.filter(category='IMAGE_URL').count()
+        total_count = text_count + image_count
 
         # Pagination
         paginator = Paginator(submissions, 10)
@@ -43,9 +44,9 @@ def home(request):
             'categories': Submission.CATEGORY_CHOICES,
             'selected_category': category,
             'selected_status': status,
-            'count': total_count,
-            'reviewed_count': reviewed_count,
-            'pending_count': pending_count,
+            'total_count': total_count,
+            'text_count': text_count,
+            'image_count': image_count,
         }
 
         if request.headers.get('HX-Request'):
@@ -58,9 +59,9 @@ def home(request):
             'categories': Submission.CATEGORY_CHOICES,
             'selected_category': '',
             'selected_status': '',
-            'count': 0,
-            'reviewed_count': 0,
-            'pending_count': 0,
+            'total_count': 0,
+            'text_count': 0,
+            'image_count': 0,
         }
         if request.headers.get('HX-Request'):
             return render(request, 'submissions/partials/content_section.html', context)
