@@ -166,6 +166,7 @@
         margin: 20px 0;
         font-size: 16px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        table-layout: fixed;
     }
 
     .submission-table th,
@@ -173,6 +174,29 @@
         padding: 12px;
         text-align: left;
         border-bottom: 1px solid #ddd;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .submission-table th:nth-child(1),
+    .submission-table td:nth-child(1) {
+        width: 40%;
+    }
+
+    .submission-table th:nth-child(2),
+    .submission-table td:nth-child(2) {
+        width: 15%;
+    }
+
+    .submission-table th:nth-child(3),
+    .submission-table td:nth-child(3) {
+        width: 15%;
+    }
+
+    .submission-table th:nth-child(4),
+    .submission-table td:nth-child(4) {
+        width: 30%;
     }
 
     .submission-table th {
@@ -417,6 +441,18 @@
 
     .refresh-btn:hover svg {
         transform: rotate(180deg);
+    }
+
+    .submission-table td {
+        position: relative;
+    }
+
+    .submission-table td:hover {
+        white-space: normal;
+        overflow: visible;
+        background-color: #fff;
+        z-index: 1;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 </style>
 {% endblock %}
