@@ -7,10 +7,8 @@ A Django-based data submission system with real-time updates using HTMX. This pr
 - ✨ Real-time content updates without full page reloads
 - 🔍 Dynamic search with instant results
 - 📊 Category and status filtering
-- 📱 Responsive design
 - 📄 Pagination with state preservation
 - ✅ Review status updates
-- 📊 Statistics dashboard
 
 ## Tech Stack
 
@@ -24,8 +22,8 @@ A Django-based data submission system with real-time updates using HTMX. This pr
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/data-submission-system.git
-cd data-submission-system
+git clone https://github.com/TharHtet236401/intern_task1.git
+cd intern_task1
 ```
 
 2. Create and activate virtual environment
