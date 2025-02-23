@@ -109,6 +109,9 @@ The project leverages HTMX for dynamic content updates, demonstrating:
 #Search
 --I used htmx for search, and I let the AI do the complex query params for the htmx request.and i just care the data sent from the backend to the frontend and noticed htmx is powerful  for dynamic content update.
 
+#Server time to local time
+--I used the AI Composer with command to change the server time to local time and justify the understanding of the code.
+
 
 
 
