@@ -77,21 +77,14 @@ def home(request):
 
 def create_submission_view(request):
     try:
-        # Clear any existing messages when loading the form
-        if request.method == 'GET':
-            storage = messages.get_messages(request)
-            storage.used = True  # Mark all messages as used
-
         if request.method == 'POST':
             form = SubmissionForm(request.POST)
             if form.is_valid():
                 form.save()
-                messages.success(request, 'Submission created successfully')
                 return redirect('home')
         form = SubmissionForm()
         return render(request, 'submissions/create-submission.html', {'form': form})
     except Exception as e:
-        messages.error(request, f"An error occurred: {str(e)}")
         return render(request, 'submissions/create-submission.html', {'form': SubmissionForm()})
 
 def update_status(request, submission_id):
