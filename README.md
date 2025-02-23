@@ -112,6 +112,9 @@ The project leverages HTMX for dynamic content updates, demonstrating:
 #Server time to local time
 --I used the AI Composer with command to change the server time to local time and justify the understanding of the code.
 
+#Request 
+--Although I try to modulate the css and js with separate files, but I had some issues with the htmx request also due to time constraint for me to do it.I will make sure to understand the usage of static files and modulate the css and js with separate files before interview.
+
 
 
 
