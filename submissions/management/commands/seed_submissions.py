@@ -5,7 +5,7 @@ import random
 from datetime import datetime, timedelta
 from django.utils import timezone
 
-#i had no idea how to generate the fake data so i used AI composer and generate the fake data .Then, i reseach and try to understand the code and make some changes.
+#i had no idea how to generate the fake data so i used AI composer and generate the fake data .Then, i reseach and try to understand the code.
 class Command(BaseCommand):
     help = 'Seeds the database with mock submission entries'
 
