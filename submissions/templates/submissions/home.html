@@ -24,7 +24,7 @@
     </div>
 
     <!-- Update the search section -->
-     <!-- I used cursur to generate the htmx request for search and backend will send the partials UI for htmx request -->
+    <!-- just updating the search query by sending the htmx request to the home function and backend will send the partials UI for htmx request -->
     <div class="search-section">
         <div class="search-container">
             <input type="text" 
@@ -38,18 +38,11 @@
                    hx-target="#content-section"
                    hx-include="[name='category'],[name='status']"
                    hx-push-url="true">
-            {% if search_query %}
-            <button class="clear-search" 
-                    hx-get="{% url 'home' %}"
-                    hx-target="#content-section"
-                    hx-include="[name='category'],[name='status']"
-                    title="Clear search">×</button>
-            {% endif %}
         </div>
     </div>
 
     <!-- Filter Section -->
-     <!-- I used cursur to generate the htmx request for filter and backend will send the dyanmic UI for htmx request -->
+     <!-- similar to search section, just updating the filter by category and status by sending the htmx request to the home function and backend will send the partials UI for htmx request and update dymnamically section by section-->
     <div class="filters">
         <div class="filters-container">
             <div class="filter-group">
@@ -102,12 +95,11 @@
     </div>
 
     <!-- Content Section -->
-     <!-- this section will be populated by the htmx request from the backend and will be always updated when sending the htmx request-->
     <div id="content-section">
+        <!-- routing to the content section by sending the htmx request to the home function and backend will send the partials UI for htmx request and update dymnamically section by section-->
         {% include 'submissions/partials/content_section.html' %}
     </div>
 </div>
-
 
 <script>
     function clearSearch() {
