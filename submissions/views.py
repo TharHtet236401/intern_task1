@@ -7,7 +7,6 @@ from .models import Submission
 from django.contrib import messages
 from .forms import SubmissionForm
 
-# Create your views here.
 def home(request):
     try:
         # Get filter parameters
@@ -91,18 +90,19 @@ def create_submission_view(request):
 
 def update_status(request, submission_id):
     try:
+        #reject the request if it is not from the htmx cause it will update only the status
+        if not request.headers.get('HX-Request'):
+            return HttpResponse("Bad Request", status=400)
+            
         submission = get_object_or_404(Submission, id=submission_id)
         new_status = request.POST.get('status') == 'true'
         submission.is_reviewed = new_status
         submission.save()
-        
-        if request.headers.get('HX-Request'):
-            #for small changes in the page, we use htmx to update the page
-            return HttpResponse(
-                render_to_string('submissions/partials/status_cell.html', 
-                {'submission': submission})
-            )
-        return JsonResponse({'success': True})
+        #render the partial status_cell.html with the updated submission
+        return HttpResponse(
+            render_to_string('submissions/partials/status_cell.html', 
+            {'submission': submission})
+        )
     except Exception as e:
-        return HttpResponse("Error updating status", status=400)
+        return HttpResponse(f"Error updating status: {str(e)}", status=400)
 
