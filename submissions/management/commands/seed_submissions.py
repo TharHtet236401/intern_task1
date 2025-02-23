@@ -3,6 +3,7 @@ from submissions.models import Submission
 from faker import Faker
 import random
 from datetime import datetime, timedelta
+from django.utils import timezone
 
 #i had no idea how to generate the fake data so i used AI composer and generate the fake data .Then, i reseach and try to understand the code and make some changes.
 class Command(BaseCommand):
@@ -41,16 +42,14 @@ class Command(BaseCommand):
             ]
 
             # Generate dates within the last 90 days
-            end_date = datetime.now()
+            end_date = timezone.now()
             start_date = end_date - timedelta(days=90)
             
             submissions = []
             for i in range(num_entries):
                 # Generate random date between start_date and end_date
-                random_date = fake.date_time_between(
-                    start_date=start_date,
-                    end_date=end_date
-                )
+                random_seconds = random.randint(0, int((end_date - start_date).total_seconds()))
+                random_date = start_date + timedelta(seconds=random_seconds)
                 
                 # Randomly choose category with 60% text, 40% images
                 category = random.choice(['TEXT'] * 6 + ['IMAGE_URL'] * 4)
