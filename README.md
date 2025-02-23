@@ -94,25 +94,25 @@ The project leverages HTMX for dynamic content updates, demonstrating:
 
 ## AI Usage Report
 
-#HTMX
+-HTMX
 --For the frontend, since I had no experience with HTMX, I first used a simple template with basic CRUD functionality. After completing it, I tried converting it to HTMX using Cursor Composer and solved issues. Later, I noticed some changes in my backend code due to HTMX integration, so I worked on understanding and adjusting my backend accordingly.But ,starting to realize the usage of htmx which is to update the contents dynamically by eding sections htmx request.
 
-#Fake Data
+-Fake Data
 --As I had no experience with mock data generation in Python, I used Cursor Composer to generate fake data. Then, I analyzed the code, understood it, and made some modifications.
 
-#Pagination
+-Pagination
 --I used htmx for pagination, and I let the AI do the complex query params for the htmx request.and i just care the data sent from the backend to the frontend.
 
-#Filtering
+-Filtering
 --I used htmx for filtering, and I let the AI do the complex query params for the htmx request.and i just care the data sent from the backend to the frontend.
 
-#Search
+-Search
 --I used htmx for search, and I let the AI do the complex query params for the htmx request.and i just care the data sent from the backend to the frontend and noticed htmx is powerful  for dynamic content update.
 
-#Server time to local time
+-Server time to local time
 --I used the AI Composer with command to change the server time to local time and justify the understanding of the code.
 
-#Request 
+-Request 
 --Although I try to modulate the css and js with separate files, but I had some issues with the htmx request also due to time constraint for me to do it.I will make sure to understand the usage of static files and modulate the css and js with separate files before interview.
 
 
