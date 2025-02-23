@@ -8,80 +8,84 @@ class Command(BaseCommand):
     help = 'Seeds the database with mock submission entries'
 
     def handle(self, *args, **options):
-        fake = Faker()
-        
-        # Clear existing entries
-        Submission.objects.all().delete()
-        
-        # Fixed number of entries
-        num_entries = 50
-        
-        # Lists for generating realistic content
-        text_prefixes = [
-            "Project update:",
-            "Meeting summary:",
-            "Customer feedback:",
-            "Bug report:",
-            "Feature request:",
-            "Documentation:",
-            "Research notes:",
-            "Team discussion:",
-            "Product review:",
-            "Analysis report:"
-        ]
-        
-        image_urls = [
-            "https://picsum.photos/800/600",
-            "https://picsum.photos/900/600",
-            "https://picsum.photos/800/500",
-            "https://picsum.photos/700/500",
-            "https://picsum.photos/600/400",
-            "https://source.unsplash.com/random/800x600",
-            "https://source.unsplash.com/random/900x600",
-            "https://source.unsplash.com/random/800x500",
-            "https://source.unsplash.com/random/700x500",
-            "https://source.unsplash.com/random/600x400"
-        ]
-
-        submissions = []
-        for i in range(num_entries):
-            # Randomly choose category with 60% text, 40% images
-            category = random.choice(['TEXT'] * 6 + ['IMAGE_URL'] * 4)
+        try:
+            fake = Faker()
             
-            # Generate content based on category
-            if category == 'TEXT':
-                prefix = random.choice(text_prefixes)
-                content = f"{prefix} {fake.paragraph(nb_sentences=2)}"
-            else:
-                content = random.choice(image_urls)
-
-            # Random date within last 30 days
-            created_at = datetime.now() - timedelta(
-                days=random.randint(0, 30),
-                hours=random.randint(0, 23),
-                minutes=random.randint(0, 59)
-            )
+            # Clear existing entries
+            Submission.objects.all().delete()
             
-            submission = Submission(
-                content=content,
-                category=category,
-                is_reviewed=random.choice([True, False]),
-                created_at=created_at,
-                updated_at=created_at
-            )
-            submissions.append(submission)
+            # Fixed number of entries
+            num_entries = 50
+            
+            # Lists for generating realistic content
+            text_prefixes = [
+                "Project update:",
+                "Meeting summary:",
+                "Customer feedback:",
+                "Bug report:",
+                "Feature request:",
+                "Documentation:",
+                "Research notes:",
+                "Team discussion:",
+                "Product review:",
+                "Analysis report:"
+            ]
+            
+            image_urls = [
+                "https://picsum.photos/800/600",
+                "https://picsum.photos/900/600",
+                "https://picsum.photos/800/500",
+                "https://picsum.photos/700/500",
+                "https://picsum.photos/600/400"
+            ]
 
-        # Bulk create all submissions
-        Submission.objects.bulk_create(submissions)
-        
-        # Count entries by category
-        text_count = sum(1 for s in submissions if s.category == 'TEXT')
-        image_count = sum(1 for s in submissions if s.category == 'IMAGE_URL')
-        
-        self.stdout.write(
-            self.style.SUCCESS(
-                f'Successfully created {num_entries} mock submissions\n'
-                f'Text entries: {text_count}\n'
-                f'Image entries: {image_count}'
+            # Generate dates within the last 90 days
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=90)
+            
+            submissions = []
+            for i in range(num_entries):
+                # Generate random date between start_date and end_date
+                random_date = fake.date_time_between(
+                    start_date=start_date,
+                    end_date=end_date
+                )
+                
+                # Randomly choose category with 60% text, 40% images
+                category = random.choice(['TEXT'] * 6 + ['IMAGE_URL'] * 4)
+                
+                # Generate content based on category
+                if category == 'TEXT':
+                    prefix = random.choice(text_prefixes)
+                    content = f"{prefix} {fake.paragraph(nb_sentences=2)}"
+                else:
+                    content = random.choice(image_urls)
+                
+                submission = Submission(
+                    content=content,
+                    category=category,
+                    is_reviewed=random.choice([True, False]),
+                    created_at=random_date,
+                    updated_at=random_date
+                )
+                submissions.append(submission)
+
+            # Bulk create all submissions
+            Submission.objects.bulk_create(submissions)
+            
+            # Count entries by category
+            text_count = sum(1 for s in submissions if s.category == 'TEXT')
+            image_count = sum(1 for s in submissions if s.category == 'IMAGE_URL')
+            
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f'Successfully created {num_entries} mock submissions\n'
+                    f'Text entries: {text_count}\n'
+                    f'Image entries: {image_count}\n'
+                    f'Date range: {start_date.date()} to {end_date.date()}'
+                )
             )
-        ) 
+        except Exception as e:
+            self.stdout.write(
+                self.style.ERROR(f'Error creating mock submissions: {str(e)}')
+            ) 

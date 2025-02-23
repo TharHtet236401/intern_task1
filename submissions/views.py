@@ -77,6 +77,11 @@ def home(request):
 
 def create_submission_view(request):
     try:
+        # Clear any existing messages when loading the form
+        if request.method == 'GET':
+            storage = messages.get_messages(request)
+            storage.used = True  # Mark all messages as used
+
         if request.method == 'POST':
             form = SubmissionForm(request.POST)
             if form.is_valid():

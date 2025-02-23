@@ -13,11 +13,72 @@
         {% if messages %}
         <div class="messages">
             {% for message in messages %}
-            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" 
+                 role="alert"
+                 id="message-{{ forloop.counter }}">
                 {{ message }}
+                <button type="button" class="close-message" onclick="closeMessage('message-{{ forloop.counter }}')">&times;</button>
             </div>
             {% endfor %}
         </div>
+
+        <script>
+            // Auto-hide messages after 5 seconds
+            document.addEventListener('DOMContentLoaded', function() {
+                const messages = document.querySelectorAll('.alert');
+                messages.forEach(function(message) {
+                    setTimeout(function() {
+                        message.style.opacity = '0';
+                        setTimeout(function() {
+                            message.remove();
+                        }, 300);
+                    }, 5000);
+                });
+            });
+
+            // Function to close message manually
+            function closeMessage(messageId) {
+                const message = document.getElementById(messageId);
+                message.style.opacity = '0';
+                setTimeout(function() {
+                    message.remove();
+                }, 300);
+            }
+        </script>
+
+        <style>
+            .messages {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 1000;
+            }
+
+            .alert {
+                position: relative;
+                padding: 12px 35px 12px 20px;
+                margin-bottom: 10px;
+                border-radius: 4px;
+                transition: opacity 0.3s ease;
+            }
+
+            .close-message {
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                background: none;
+                border: none;
+                font-size: 20px;
+                cursor: pointer;
+                color: inherit;
+                opacity: 0.5;
+            }
+
+            .close-message:hover {
+                opacity: 1;
+            }
+        </style>
         {% endif %}
 
         <form method="POST">
@@ -149,28 +210,6 @@
         padding: 0;
         margin: 5px 0;
         font-size: 14px;
-    }
-
-    .messages {
-        margin-bottom: 20px;
-    }
-
-    .alert {
-        padding: 12px 20px;
-        border-radius: 4px;
-        margin-bottom: 10px;
-    }
-
-    .alert-success {
-        background-color: #d4edda;
-        border-color: #c3e6cb;
-        color: #155724;
-    }
-
-    .alert-error {
-        background-color: #f8d7da;
-        border-color: #f5c6cb;
-        color: #721c24;
     }
 
     .form-errors {
