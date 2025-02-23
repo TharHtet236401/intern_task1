@@ -22,6 +22,7 @@ def home(request):
         
         # Apply filters
         if search_query:
+            #this is the filter for the search query
             submissions = submissions.filter(content__icontains=search_query)
             
         if category:

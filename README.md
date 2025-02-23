@@ -80,4 +80,10 @@ The application will be available at `http://127.0.0.1:8000/`
 #Filtering
 --I used htmx for filtering, and I let the AI do the complex query params for the htmx request.and i just care the data sent from the backend to the frontend.
 
+#Search
+--I used htmx for search, and I let the AI do the complex query params for the htmx request.and i just care the data sent from the backend to the frontend and noticed htmx is powerful  for dynamic content update.
+
+
+
+
 
