@@ -11,12 +11,14 @@ from .forms import SubmissionForm
 def home(request):
     try:
         # Get filter parameters
+        #this block is taking the query from the url 
         category = request.GET.get('category', '')
         status = request.GET.get('status', '')
         search_query = request.GET.get('search', '')
         page = request.GET.get('page', '1')
         
         # Base queryset
+        #this is the base queryset that is used to get all the submissions
         submissions = Submission.objects.all().order_by('-created_at')
         
         # Apply filters
@@ -31,6 +33,7 @@ def home(request):
         elif status == 'pending':
             submissions = submissions.filter(is_reviewed=False)
 
+       # now you got the filterd submissions
         # Get filtered counts by category
         text_count = submissions.filter(category='TEXT').count()
         image_count = submissions.filter(category='IMAGE_URL').count()
@@ -53,7 +56,7 @@ def home(request):
             'text_count': text_count,
             'image_count': image_count,
         }
-
+        # if the request is from the htmx, then render the partial content_section.html with the data extracted from database
         if request.headers.get('HX-Request'):
             return render(request, 'submissions/partials/content_section.html', context)
         return render(request, 'submissions/home.html', context)
@@ -73,15 +76,18 @@ def home(request):
         return render(request, 'submissions/home.html', context)
 
 def create_submission_view(request):
-    if request.method == 'POST':
-        form = SubmissionForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Submission created successfully')
-            return redirect('home')
-    else:
+    try:
+        if request.method == 'POST':
+            form = SubmissionForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Submission created successfully')
+                return redirect('home')
         form = SubmissionForm()
-    return render(request, 'submissions/create-submission.html', {'form': form})
+        return render(request, 'submissions/create-submission.html', {'form': form})
+    except Exception as e:
+        messages.error(request, f"An error occurred: {str(e)}")
+        return render(request, 'submissions/create-submission.html', {'form': SubmissionForm()})
 
 def update_status(request, submission_id):
     try:
@@ -91,6 +97,7 @@ def update_status(request, submission_id):
         submission.save()
         
         if request.headers.get('HX-Request'):
+            #for small changes in the page, we use htmx to update the page
             return HttpResponse(
                 render_to_string('submissions/partials/status_cell.html', 
                 {'submission': submission})

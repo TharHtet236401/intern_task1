@@ -8,16 +8,53 @@
     </div>
     
     <div class="form-container">
+        <!-- Add messages section -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <form method="POST">
             {% csrf_token %}
+            
+            <!-- Display form errors if any -->
+            {% if form.non_field_errors %}
+            <div class="form-errors">
+                {% for error in form.non_field_errors %}
+                    <p class="error-message">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
             <div class="form-group">
                 <label for="{{ form.content.id_for_label }}">Content:</label>
                 {{ form.content }}
+                {% if form.content.errors %}
+                    <div class="field-errors">
+                        {% for error in form.content.errors %}
+                            <p class="error-message">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
+            
             <div class="form-group">
                 <label for="{{ form.category.id_for_label }}">Category:</label>
                 {{ form.category }}
+                {% if form.category.errors %}
+                    <div class="field-errors">
+                        {% for error in form.category.errors %}
+                            <p class="error-message">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
+            
             <button type="submit" class="submit-btn">Create Submission</button>
         </form>
     </div>
@@ -80,6 +117,13 @@
         border: 1px solid #ddd;
         border-radius: 4px;
         font-size: 16px;
+        transition: border-color 0.3s ease;
+    }
+
+    input[type="text"]:focus, select:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
     }
 
     .submit-btn {
@@ -104,6 +148,58 @@
         padding: 0;
         margin: 5px 0;
         font-size: 14px;
+    }
+
+    .messages {
+        margin-bottom: 20px;
+    }
+
+    .alert {
+        padding: 12px 20px;
+        border-radius: 4px;
+        margin-bottom: 10px;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+    }
+
+    .alert-error {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+    }
+
+    .form-errors {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+
+    .field-errors {
+        color: #dc3545;
+        font-size: 0.875em;
+        margin-top: 5px;
+    }
+
+    .error-message {
+        margin: 5px 0;
+    }
+
+    /* Error state for inputs */
+    .field-errors + input[type="text"],
+    .field-errors + select {
+        border-color: #dc3545;
+    }
+
+    .field-errors + input[type="text"]:focus,
+    .field-errors + select:focus {
+        box-shadow: 0 0 0 2px rgba(220,53,69,0.25);
     }
 </style>
 {% endblock %}
