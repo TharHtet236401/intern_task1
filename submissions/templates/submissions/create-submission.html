@@ -9,6 +9,7 @@
     
     <div class="form-container">
         <!-- Add messages section -->
+        <!-- just displaying the messages from the backend-->
         {% if messages %}
         <div class="messages">
             {% for message in messages %}
@@ -22,7 +23,7 @@
         <form method="POST">
             {% csrf_token %}
             
-            <!-- Display form errors if any -->
+            <!-- just displaying the form errors from the backend-->
             {% if form.non_field_errors %}
             <div class="form-errors">
                 {% for error in form.non_field_errors %}

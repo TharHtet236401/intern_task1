@@ -1,3 +1,5 @@
+
+<!-- just updating the status of the submission by sending the htmx request to the backend-->
 <select class="status-select" 
         hx-post="{% url 'update_status' submission.id %}"
         hx-trigger="change"

@@ -24,6 +24,7 @@
     </div>
 
     <!-- Update the search section -->
+     <!-- I used cursur to generate the htmx request for search and backend will send the partials UI for htmx request -->
     <div class="search-section">
         <div class="search-container">
             <input type="text" 
@@ -48,6 +49,7 @@
     </div>
 
     <!-- Filter Section -->
+     <!-- I used cursur to generate the htmx request for filter and backend will send the dyanmic UI for htmx request -->
     <div class="filters">
         <div class="filters-container">
             <div class="filter-group">
@@ -59,6 +61,7 @@
                         name="category"
                         hx-include="[name='status'],[name='search']">
                     <option value="" {% if not selected_category %}selected{% endif %}>All</option>
+                    <!-- display the categories from the backend -->
                     {% for code, name in categories %}
                         <option value="{{ code }}" {% if selected_category == code %}selected{% endif %}>
                             {{ name }}
@@ -67,6 +70,7 @@
                 </select>
             </div>
 
+            <!-- just same logic from filter by category, the default is all, but for status I uss static options due to limited options , not just like dynamic options-->
             <div class="filter-group">
                 <h3>Filter by Status:</h3>
                 <select hx-get="{% url 'home' %}"
@@ -81,6 +85,7 @@
                 </select>
             </div>
 
+            <!-- just refreshing the filter by htmx request-->
             <div class="filter-group">
                 <h3>&nbsp;</h3>
                 <button class="refresh-btn"
@@ -97,17 +102,17 @@
     </div>
 
     <!-- Content Section -->
+     <!-- this section will be populated by the htmx request from the backend and will be always updated when sending the htmx request-->
     <div id="content-section">
         {% include 'submissions/partials/content_section.html' %}
     </div>
 </div>
 
-<!-- Add this script at the end of your template -->
+
 <script>
     function clearSearch() {
         const searchInput = document.getElementById('search-input');
         searchInput.value = '';
-        // Trigger HTMX request
         htmx.trigger(searchInput, 'changed');
     }
 </script>

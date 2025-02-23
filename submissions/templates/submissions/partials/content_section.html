@@ -12,16 +12,19 @@
     </tbody>
 </table>
 
+    <!-- I purely used htmx for pagination by using htmx by to send data to home backend function-->
 {% if submissions.paginator.num_pages > 1 %}
-<div class="pagination">
+    <div class="pagination">
     {% if submissions.has_previous %}
+    <!-- developing the query params for the htmx request.. pretty complex and I let the AI do this -->
         <a hx-get="{% url 'home' %}?page={{ submissions.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}"
            hx-target="#content-section"
            class="page-btn prev-btn">&larr; Previous</a>
     {% endif %}
 
     <span class="page-info">Page {{ submissions.number }} of {{ submissions.paginator.num_pages }}</span>
-
+    
+       <!-- developing the query params for the htmx request.. pretty complex and I let the AI do this -->
     {% if submissions.has_next %}
         <a hx-get="{% url 'home' %}?page={{ submissions.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}"
            hx-target="#content-section"
