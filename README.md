@@ -91,19 +91,8 @@ The project leverages HTMX for dynamic content updates, demonstrating:
 ### Data Management
 - Efficient database queries with Django ORM
 - Custom management command for seeding test data
-- Real-time statistics calculation
 
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## AI Usage Report
 
 #HTMX
 --For the frontend, since I had no experience with HTMX, I first used a simple template with basic CRUD functionality. After completing it, I tried converting it to HTMX using Cursor Composer and solved issues. Later, I noticed some changes in my backend code due to HTMX integration, so I worked on understanding and adjusting my backend accordingly.But ,starting to realize the usage of htmx which is to update the contents dynamically by eding sections htmx request.
