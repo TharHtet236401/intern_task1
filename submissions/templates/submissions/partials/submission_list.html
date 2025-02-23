@@ -7,12 +7,39 @@
             {% include 'submissions/partials/status_cell.html' %}
         </td>
         <td>
-            <span class="created-date">{{ submission.created_at|date:"j.n.y" }}</span>
-            <span class="created-time">{{ submission.created_at|time:"H:i:s" }}</span>
+            <!-- Convert server timestamp to local time -->
+            <span class="created-date" data-timestamp="{{ submission.created_at|date:'c' }}">
+                {{ submission.created_at|date:"j.n.y" }}
+            </span>
+            <span class="created-time" data-timestamp="{{ submission.created_at|date:'c' }}">
+                {{ submission.created_at|time:"H:i:s" }}
+            </span>
         </td>
     </tr>
 {% empty %}
     <tr>
         <td colspan="4" class="no-data">No submissions found.</td>
     </tr>
-{% endfor %} 
+{% endfor %}
+
+<script>
+    // Convert server timestamps to local time
+    function updateTimestamps() {
+        document.querySelectorAll('[data-timestamp]').forEach(element => {
+            const timestamp = new Date(element.dataset.timestamp);
+            if (element.classList.contains('created-date')) {
+                element.textContent = timestamp.toLocaleDateString();
+            } else if (element.classList.contains('created-time')) {
+                element.textContent = timestamp.toLocaleTimeString();
+            }
+        });
+    }
+
+    // Update timestamps when content is loaded
+    updateTimestamps();
+    
+    // Also update timestamps when content is dynamically loaded via HTMX
+    document.body.addEventListener('htmx:afterSwap', function(event) {
+        updateTimestamps();
+    });
+</script> 
